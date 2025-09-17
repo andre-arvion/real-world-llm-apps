@@ -312,15 +312,16 @@ def get_drive_service():
     2. Or provide credentials in your .env file
     
     See the README.md for detailed instructions.
-    """)
+    """
+    )
     return None
 
 # Function to extract text from a PDF file
 def extract_text_from_pdf(file_obj):
-    pdf_reader = PyPDF2.PdfReader(file_obj)
+    pdf_reader = PyPDF2.PdfFileReader(file_obj)
     text = ""
-    for page_num in range(len(pdf_reader.pages)):
-        text += pdf_reader.pages[page_num].extract_text()
+    for page_num in range(pdf_reader.numPages):
+        text += pdf_reader.getPage(page_num).extract_text()
     return text
 
 # Function to extract text from a DOCX file
