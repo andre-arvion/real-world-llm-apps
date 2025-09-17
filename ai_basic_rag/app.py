@@ -14,7 +14,7 @@ st.set_page_config(
 )
 
 # Custom CSS for better styling
-st.markdown("""
+st.markdown(""" 
 <style>
     .main .block-container {
         padding-top: 2rem;
@@ -177,15 +177,15 @@ with st.sidebar:
         if file_id not in st.session_state.pdf_processed:
             with st.spinner("Processing PDF..."):
                 try:
-                    pdf_reader = PyPDF2.PdfReader(io.BytesIO(pdf_file.read()))
+                    pdf_reader = PyPDF2.PdfFileReader(io.BytesIO(pdf_file.read()))
                     text = ""
                     
                     # Show progress while extracting text
                     st.write("📄 Extracting text...")
                     pdf_progress = st.progress(0)
-                    for i, page in enumerate(pdf_reader.pages):
-                        text += pdf_reader.pages[i].extract_text() + "\n\n"
-                        pdf_progress.progress((i + 1) / len(pdf_reader.pages))
+                    for i in range(pdf_reader.getNumPages()):
+                        text += pdf_reader.getPage(i).extractText() + "\n\n"
+                        pdf_progress.progress((i + 1) / pdf_reader.getNumPages())
                     
                     if text:
                         # Check if text is large enough to need chunking
