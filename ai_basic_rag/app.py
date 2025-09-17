@@ -154,7 +154,7 @@ with st.sidebar:
     # Controls for knowledge base
     kb_col1, kb_col2 = st.columns(2)
     with kb_col2:
-        if st.button("🗑️ Clear Knowledge", key="clear_kb"):
+        if st.button("🗑️ Clear Knowledge"):
             clear_knowledge()
     
     # Chunking settings
@@ -177,15 +177,16 @@ with st.sidebar:
         if file_id not in st.session_state.pdf_processed:
             with st.spinner("Processing PDF..."):
                 try:
-                    pdf_reader = PyPDF2.PdfReader(io.BytesIO(pdf_file.read()))
+                    pdf_reader = PyPDF2.PdfFileReader(io.BytesIO(pdf_file.read()))
                     text = ""
                     
                     # Show progress while extracting text
                     st.write("📄 Extracting text...")
                     pdf_progress = st.progress(0)
-                    for i, page in enumerate(pdf_reader.pages):
-                        text += pdf_reader.pages[i].extract_text() + "\n\n"
-                        pdf_progress.progress((i + 1) / len(pdf_reader.pages))
+                    num_pages = pdf_reader.numPages
+                    for i in range(num_pages):
+                        text += pdf_reader.getPage(i).extractText() + "\n\n"
+                        pdf_progress.progress((i + 1) / num_pages)
                     
                     if text:
                         # Check if text is large enough to need chunking
@@ -253,7 +254,7 @@ user_input = st.text_area("Your question:", height=80, placeholder="Ask about yo
 # Two columns for the chat buttons
 col1, col2, col3 = st.columns([1, 1, 4])
 with col1:
-    if st.button("Send", key="chat_submit"):
+    if st.button("Send"):
         if user_input:
             # Display user message
             st.markdown(f'<div class="chat-message-user"><strong>You:</strong><br>{user_input}</div>', unsafe_allow_html=True)
@@ -286,6 +287,6 @@ with col1:
             st.warning("Please enter a question.")
 
 with col2:
-    if st.button("Clear Chat", key="clear_chat"):
+    if st.button("Clear Chat"):
         clear_chat()
         st.rerun() 
