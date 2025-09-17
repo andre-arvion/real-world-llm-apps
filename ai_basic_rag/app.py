@@ -177,15 +177,17 @@ with st.sidebar:
         if file_id not in st.session_state.pdf_processed:
             with st.spinner("Processing PDF..."):
                 try:
-                    pdf_reader = PyPDF2.PdfReader(io.BytesIO(pdf_file.read()))
+                    pdf_reader = PyPDF2.PdfFileReader(io.BytesIO(pdf_file.read()))
                     text = ""
                     
                     # Show progress while extracting text
                     st.write("📄 Extracting text...")
                     pdf_progress = st.progress(0)
-                    for i, page in enumerate(pdf_reader.pages):
-                        text += pdf_reader.pages[i].extract_text() + "\n\n"
-                        pdf_progress.progress((i + 1) / len(pdf_reader.pages))
+                    num_pages = pdf_reader.numPages
+                    for i in range(num_pages):
+                        page = pdf_reader.getPage(i)
+                        text += page.extractText() + "\n\n"
+                        pdf_progress.progress((i + 1) / num_pages)
                     
                     if text:
                         # Check if text is large enough to need chunking
