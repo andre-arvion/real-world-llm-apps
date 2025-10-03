@@ -317,10 +317,10 @@ def get_drive_service():
 
 # Function to extract text from a PDF file
 def extract_text_from_pdf(file_obj):
-    pdf_reader = PyPDF2.PdfReader(file_obj)
+    pdf_reader = PyPDF2.PdfFileReader(file_obj, strict=False)
     text = ""
-    for page_num in range(len(pdf_reader.pages)):
-        text += pdf_reader.pages[page_num].extract_text()
+    for page_num in range(pdf_reader.numPages):
+        text += pdf_reader.getPage(page_num).extractText()
     return text
 
 # Function to extract text from a DOCX file
